@@ -62,7 +62,7 @@ if __name__ == "__main__":
             w = listener.w
             
             for turbine in turbines:
-                turbine.angle += w*T
+                turbine.angle -= w*T
                 turbine.angle = (turbine.angle + pi) % (2*pi) - pi
                 joint_msg.position[0] = turbine.angle
                 turbine.pub.publish(joint_msg)

@@ -35,7 +35,7 @@
   </oceanState>
   
   <simParams>
-    <disableShaders> 0 </disableShaders>
+    <disableShaders> 1 </disableShaders>
     <resw> 800 </resw>
     <resh> 600 </resh>
   </simParams>
@@ -76,13 +76,13 @@
     <name>camera</name>
     <file>urdf/camera.urdf</file>
      <position>
-      <x> 0</x>
+      <x> 10</x>
       <y> 0 </y>
       <z> 20 </z>
     </position> 
    <orientation>
       <r>0</r>
-      <p>1.570796326794896 </p>
+      <p>-1.570796326794896 </p>
       <y>0 </y>
     </orientation>
     <virtualCamera>
@@ -100,13 +100,22 @@
       <p>0 </p>
       <y>1.570796326794896 </y>
     </orientation>
+    <parameters>
+        <fx>1000</fx>
+        <fy>1000</fy>
+        <x0>400</x0>
+        <y0>300</y0>
+        <f>100.0</f>
+        <n>0.15</n>
+        <k>0.0</k>
+      </parameters>
   </virtualCamera>
   </vehicle>
   
   
-   <object>
+   <!--object>
     <name>terrain</name>
-    <file>terrain/shipwreck/terrain.ive</file>
+    <file>terrain/seafloor/terrain_noship.ive</file>
     <position>
       <x> 0</x>
       <y> 0 </y>
@@ -117,7 +126,7 @@
       <p>0 </p>
       <y>0 </y>
     </orientation>
-  </object>
+  </object-->
   
   
   <rosInterfaces>
