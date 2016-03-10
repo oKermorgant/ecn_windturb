@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="parse" default="false"/>
+  <arg name="shaders" default="true"/>
+  <!-- virtual arg for uwsim shaders -->
+  <arg name="disableShaders" default="" if="$(arg shaders)"/>  
+  <arg name="disableShaders" default="--disableShaders" unless="$(arg shaders)"/> 
+  
+    <!-- launch uwsim -->
+    <node name="uwsim" pkg="uwsim" type="uwsim" 
+        args="$(arg disableShaders) --dataPath $(find windturb) --configfile urdf/windfarm.xml" respawn="true"/>  
+
+    <!-- launch wind -->
+    <node name="wind" pkg="windturb" type="wind">
+        <param name="w" value="0.5"/>
+    </node>
+</launch>
+

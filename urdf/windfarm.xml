@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE UWSimScene SYSTEM "UWSimScene.dtd" >
+
+<UWSimScene>
+  <oceanState>
+    <windx> 1.0 </windx>
+    <windy> 1.0 </windy>
+    <windSpeed> 12 </windSpeed>
+    <depth> 10000 </depth>
+    <reflectionDamping> 0.35 </reflectionDamping>
+    <waveScale> 1e-8 </waveScale>
+    <isNotChoppy> 0 </isNotChoppy>
+    <choppyFactor> -2.5 </choppyFactor>
+    <crestFoamHeight> 2.2 </crestFoamHeight>
+    <oceanSurfaceHeight> 0 </oceanSurfaceHeight>
+    <fog>
+      <density> 0.1 </density>
+      <color>
+        <r>0.017</r>
+        <g>0.027</g>
+        <b>0.079</b>
+      </color>
+    </fog>
+    <color>
+        <r>0.017</r>
+        <g>0.027</g>
+        <b>0.079</b>
+    </color>
+    <attenuation>
+      <r>0.015</r>
+      <g>0.0075 </g>
+      <b> 0.005 </b>
+    </attenuation>
+  </oceanState>
+  
+  <simParams>
+    <disableShaders> 0 </disableShaders>
+    <resw> 800 </resw>
+    <resh> 600 </resh>
+  </simParams>
+
+  <camera>
+    <freeMotion> 1 </freeMotion>
+    <fov> 60 </fov>
+    <aspectRatio> 1.33 </aspectRatio>
+    <near> 1 </near>
+    <far> 10000 </far>
+    <position>
+      <x>50</x>
+      <y>0 </y>
+      <z>50 </z>
+    </position> 
+    <lookAt>
+      <x>0</x>
+      <y>0 </y>
+      <z>20 </z>
+    </lookAt>
+  </camera>
+
+  <vehicle>
+    <name>turbine1</name>
+    <file>urdf/turbine.urdf</file> 
+    <jointValues>
+      <joint> 0 </joint>
+    </jointValues>
+     <position>
+      <x> 0</x>
+      <y> 0 </y>
+      <z> 20 </z>
+    </position>
+
+  </vehicle>  
+  
+  <vehicle>
+    <name>camera</name>
+    <file>urdf/camera.urdf</file>
+     <position>
+      <x> 0</x>
+      <y> 0 </y>
+      <z> 20 </z>
+    </position> 
+   <orientation>
+      <r>0</r>
+      <p>1.570796326794896 </p>
+      <y>0 </y>
+    </orientation>
+    <virtualCamera>
+      <name>camera</name>
+    <relativeTo>base_link</relativeTo>
+    <resw> 800 </resw>
+    <resh> 600 </resh>
+    <position>
+      <x> 0</x>
+      <y> 0 </y>
+      <z> 0 </z>
+    </position>  
+    <orientation>
+      <r>3.1415927</r>
+      <p>0 </p>
+      <y>1.570796326794896 </y>
+    </orientation>
+  </virtualCamera>
+  </vehicle>
+  
+  
+   <object>
+    <name>terrain</name>
+    <file>terrain/shipwreck/terrain.ive</file>
+    <position>
+      <x> 0</x>
+      <y> 0 </y>
+      <z> 0 </z>
+    </position>
+    <orientation>
+      <r>0</r>
+      <p>0 </p>
+      <y>0 </y>
+    </orientation>
+  </object>
+  
+  
+  <rosInterfaces>
+      
+    <ROSOdomToPAT>
+      <topic> /camera/state_sp </topic>
+      <vehicleName> camera </vehicleName>
+    </ROSOdomToPAT>
+    <ROSOdomToPAT>
+      <topic> /turbine1/state_sp </topic>
+      <vehicleName> turbine1 </vehicleName>
+    </ROSOdomToPAT>
+   <PATToROSOdom>
+      <topic> /camera/state </topic>
+      <vehicleName> camera </vehicleName>
+    </PATToROSOdom>
+
+
+    
+    <ROSJointStateToArm> 
+        <topic>/turbine1/joint_states</topic>
+        <vehicleName>turbine1</vehicleName>
+    </ROSJointStateToArm>
+
+    <VirtualCameraToROSImage> 
+      <cameraName>camera</cameraName>
+      <imageTopic> /uwsim/camera </imageTopic>
+      <infoTopic> /uwsim/camera_info </infoTopic>
+    </VirtualCameraToROSImage>
+    
+
+   
+  </rosInterfaces>
+  
+  
+
+
+</UWSimScene>
+

@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<robot name="blades">
+
+
+<link name="base_link">
+     <inertial>
+      <origin xyz="-0.003053 -0.038651 -0.019268" />
+      <mass value="0.97559947"/>
+      <inertia ixx="3.1081800"  ixy="-0.25460189"  ixz="2.0318174" iyy="6.3787776" iyz="0.16417863" izz="5.3316425" />
+    </inertial>
+       
+    <visual name="visual">
+         <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <!--box size="0.102 0.109 0.106" /-->
+        <mesh filename="package://windturb/meshes/blades.dae"  scale="1 1 1"/>
+      </geometry>
+      <material name="Grey">
+        <color rgba="0.20 0.20 0.20 1.0"/>
+      </material>
+    </visual> 
+
+  </link>
+    
+</robot>

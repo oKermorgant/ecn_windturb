@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<robot name="turbine">
+
+
+<link name="pole"> 
+    <visual name="visual">
+         <origin xyz="0 0 -6" rpy="0 0 0" />
+      <geometry>
+        <!--box size="0.102 0.109 0.106" /-->
+        <mesh filename="meshes/pole.osgt"  scale="1 1 1"/>
+      </geometry>
+    </visual> 
+  </link>
+  
+  <joint name="turbine" type="continuous">
+    <parent link="pole"/>
+    <child link="blades"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 0" rpy="0 1.5707963267948966 0" />
+  </joint>  
+  
+  <link name="blades">  
+    <visual name="visual">
+         <origin xyz="6.04 0 0" rpy="0 -1.5707963267948966 0" />
+      <geometry>
+        <mesh filename="meshes/blades.osgt"  scale="1 1 1"/>
+      </geometry>
+    </visual> 
+  </link>
+    
+</robot>

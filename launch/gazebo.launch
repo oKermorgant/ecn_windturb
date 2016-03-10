@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="paused" default="true"/>
+    <arg name="model" default="cube"/>
+    
+    <!-- Launch Gazebo with empty world-->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="gui" value="true"/>
+        <arg name="paused" value="$(arg paused)"/>
+    </include >
+    
+    <!-- spawn robot -->
+    <node name="robot_sp" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model windturb -file $(find windturb)/urdf/turbine_gz.urdf -x 3 -y 6.5 -z 13 -R 0 -P 0 -Y 0.0"/>
+    
+
+
+</launch>
