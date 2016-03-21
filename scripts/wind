@@ -56,7 +56,6 @@ if __name__ == "__main__":
             if search_turbines:
                 print('Not found yet')
             rospy.sleep(3)
-            
         else:
             
             w = listener.w

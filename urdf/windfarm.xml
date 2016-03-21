@@ -35,7 +35,7 @@
   </oceanState>
   
   <simParams>
-    <disableShaders> 1 </disableShaders>
+    <disableShaders> 0 </disableShaders>
     <resw> 800 </resw>
     <resh> 600 </resh>
   </simParams>
