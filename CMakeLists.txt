@@ -5,11 +5,10 @@ project(windturb)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  ok_tools
   image_transport
 )
 
-
+find_package(VISP REQUIRED)
 find_package( OpenCV REQUIRED )
 
 catkin_package(
@@ -27,11 +26,13 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
+${VISP_INCLUDE_DIRS}
 )
 
 
 
-add_executable(windturb windturb.cpp)
+add_executable(windturb src/windturb.cpp include/windturb/okExperiment.h src/okExperiment.cpp)
 target_link_libraries(windturb  ${catkin_LIBRARIES} ${VISP_LIBRARIES} ${OpenCV_LIBS} )
