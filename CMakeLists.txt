@@ -11,12 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(VISP REQUIRED)
 find_package( OpenCV REQUIRED )
 
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES windturb
-#  CATKIN_DEPENDS ok_tools
-#  DEPENDS system_lib
-)
+catkin_package()
 
 ###########
 ## Build ##
