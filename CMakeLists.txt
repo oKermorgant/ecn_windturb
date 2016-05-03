@@ -5,19 +5,13 @@ project(windturb)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  ok_tools
   image_transport
 )
 
 
 find_package( OpenCV REQUIRED )
 
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES windturb
-#  CATKIN_DEPENDS ok_tools
-#  DEPENDS system_lib
-)
+catkin_package()
 
 ###########
 ## Build ##
