@@ -69,16 +69,15 @@
       <y> 0 </y>
       <z> 20 </z>
     </position>
-
   </vehicle>  
   
   <vehicle>
     <name>camera</name>
     <file>urdf/camera.urdf</file>
      <position>
-      <x> 10</x>
-      <y> 0 </y>
-      <z> 20 </z>
+      <x> 100</x>
+      <y> 20 </y>
+      <z> 40 </z>
     </position> 
    <orientation>
       <r>0</r>
