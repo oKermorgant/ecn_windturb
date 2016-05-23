@@ -80,6 +80,7 @@ int main ( int argc, char ** argv )
     vpHomogeneousMatrix cMo(10,10,50,M_PI/2,0,0.3);
     vpImagePoint ip1, ip2;
     vpColVector v(6);
+    
 
     // features
     unsigned int m = 0;

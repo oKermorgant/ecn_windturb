@@ -85,7 +85,7 @@ void okExperiment::saveTimed(vpColVector &v, const string name, const string leg
 // Save 3d pose or position
 void okExperiment::save3Dpose(vpColVector &v, const string name, const string legend, const bool &saveFile)
 {
-    saveVariable(okExperiment::POSE, v, name, legend, "", "", saveFile);
+    saveVariable(okExperiment::POSE, v, name, legend, "", "", saveFile); 
 }
 
 // Save normalized data
