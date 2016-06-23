@@ -17,6 +17,9 @@
 #include <windturb/okExperiment.h>
 #include <visp/vpSubMatrix.h>
 #include <ros/package.h>
+#include <visp3/core/vpCircle.h>
+#include <visp3/core/vpDisplay.h>
+#include <math.h>
 
 
 using std::string;
@@ -39,10 +42,11 @@ int main ( int argc, char ** argv )
     bool useP0;vpIoTools::readConfigVar("useP0", useP0);
     bool use3D;vpIoTools::readConfigVar("use3D", use3D);
     bool rotating;vpIoTools::readConfigVar("rotating", rotating);
+    bool useCircleRadius;vpIoTools::readConfigVar("useCircleRadius", useCircleRadius);
     double lambda;vpIoTools::readConfigVar("lambda", lambda);
 
     if(use3D)
-        useP0 = useLines = useDiffAngles = rotating = false;
+        useP0 = useLines = useDiffAngles = rotating = useCircleRadius = false;
 
     // filenames
     vpIoTools::setBaseDir ( dataPath );
@@ -52,6 +56,7 @@ int main ( int argc, char ** argv )
     vpIoTools::addNameElement ( "l", useLines );
     vpIoTools::addNameElement ( "dt", useDiffAngles );
     vpIoTools::addNameElement ( "rot", rotating );
+    vpIoTools::addNameElement ( "Rad", useCircleRadius );
 
     // init display
     vpImage<unsigned char> I ( 480,640,255 );
@@ -67,24 +72,30 @@ int main ( int argc, char ** argv )
     vpPoint P[5];
     double offset = M_PI/6;
     line[0].setWorldCoordinates(1,0,0,0,0,1,0,0);   // x = y = 0
-    P[1].setWorldCoordinates(0,0,-100);
+    P[1].setWorldCoordinates(0,0,-7);
     unsigned int i;
     for(i=0;i<3;++i)
     {
         line[i+1].setWorldCoordinates(0,1,0,0,cos(offset+i*2*M_PI/3), 0, sin(offset+i*2*M_PI/3),0);  // y = 0, x.cos(t) + z.sin(t) = 0
         P[i+2].setWorldCoordinates(-sin(offset+i*2*M_PI/3),0,cos(offset+i*2*M_PI/3));
+        //cout << "P[" <<i+2<< "] = " << P[i+2] << endl; 
     }
 
     // camera pose
-    vpHomogeneousMatrix cMod(0,0,5,M_PI/2,0,0);
-    vpHomogeneousMatrix cMo(10,10,50,M_PI/2,0,0.3);
-    vpImagePoint ip1, ip2;
+    vpHomogeneousMatrix cMod(0,0,4,M_PI/2,0,0);
+    vpHomogeneousMatrix cMo(10,10,50,M_PI/2,0,M_PI/6);
+    vpImagePoint ip1, ip2, test_point;
     vpColVector v(6);
-    
 
-    // features
+    // Initializations for the circle display
+    double Xa, Ya, Za, slope_1, slope_2, x_c, y_c, R, RR;
+
+    // Init circle 
+    vpCircle C;
+    C.setWorldCoordinates(0,1,0,0,0,0,1);
+
+    // Features *******
     unsigned int m = 0;
-
 
     // central point
     vpFeaturePoint p, pd;
@@ -119,7 +130,7 @@ int main ( int argc, char ** argv )
     unsigned int i2;
     if(useDiffAngles)
     {
-        m += 3;
+        m += 2;
         for(i=0;i<2;++i)
         {
             i2 = ((i+1)%3) +1;
@@ -127,6 +138,12 @@ int main ( int argc, char ** argv )
             dtd[i] = ld[i2].error(ld[i+1])[1];
         }
     }
+
+    if(useCircleRadius)
+    {
+        m+=1;
+    }
+
     vpMatrix L(m,6), Lt;
     vpColVector e(m);
 
@@ -134,14 +151,13 @@ int main ( int argc, char ** argv )
     okExperiment exp;
     vpPoseVector pose(cMod);
     vpColVector pose_v;
-   // exp.save(pose_v, "err3D", exp.legendPose, "Pose error");
     exp.save3Dpose(pose_v, "pose", vpIoTools::getBaseName());
     exp.showMovingCamera();
     exp.setDesiredPose(pose);
 
     cout << "Looping" << endl;
 
-    // loop
+    // ******* LOOP *********************
     while(!vpDisplay::getClick(I, false))
     {
         // save cMo
@@ -159,6 +175,9 @@ int main ( int argc, char ** argv )
             }
         }
 
+        // update Circle
+        C.changeFrame(cMo);
+        C.project();
 
         // update lines
         for(i=0;i<4;++i)
@@ -167,10 +186,17 @@ int main ( int argc, char ** argv )
             line[i].project();
             vpFeatureBuilder::create(l[i], line[i]);
         }
+
         // update point
         P[0].changeFrame(cMo);
         P[0].project();
         vpFeatureBuilder::create(p, P[0]);
+
+        for(i=1;i<5;++i)
+        {
+            P[i].changeFrame(cMo);
+            P[i].project();
+        }
 
         // control law
         if(use3D)
@@ -194,7 +220,7 @@ int main ( int argc, char ** argv )
                 m += 2;
             }
 
-            // 2D lines
+            //2D lines
             for(i=0;i<4;++i)
             {
                 if(useLines)
@@ -236,19 +262,44 @@ int main ( int argc, char ** argv )
                 }
             }
 
-            cout << "error: " << e.t() << endl;
-            v = -lambda * L.pseudoInverse() * e;
+            //Extract radius of the circle (In normalized cordinates x&y): 5th parameter in the visual feature
+            if(useCircleRadius)
+            {
 
+            //three points are P[2](x1,y1), P[3](x2,y2), P[4](x3,y3)
+                slope_1 = (P[2].get_y()-P[3].get_y())/(P[2].get_x()-P[3].get_x());
+                slope_2 = (P[4].get_y()-P[3].get_y())/(P[4].get_x()-P[3].get_x());
+
+                x_c = ((slope_1)*(slope_2)*(P[4].get_y()-P[2].get_y()) + (slope_1)*(P[3].get_x()+P[4].get_x()) - (slope_2)*(P[2].get_x()+P[3].get_x()))/(2*(slope_1 - slope_2));
+                y_c = (-(1/slope_1)*(x_c) - ((P[2].get_x()+P[3].get_x())/2)) + ((P[2].get_y()+P[3].get_y())/2);
+
+                R = sqrt((P[3].get_x()-x_c)*(P[3].get_x()-x_c) + (P[3].get_y()-y_c)*(P[3].get_y()-y_c));
+                RR = sqrt((P[3].get_x()-P[0].get_x())*(P[3].get_x()-P[0].get_x()) + (P[3].get_y()-P[0].get_y())*(P[3].get_y()-P[0].get_y()));
+
+            //Checking
+                cout<<"R from 3 blade points= " << R << endl; // Not a good result, varies if blade rotation is on 
+                cout<<"R from the known center and a blade point (cheating)= " << RR << endl; // Not bad and stable even if blade rotation is on
+            
+            //Error calc and interaction matrix for the Radius 
+                e[m] = RR*100 - 12; // 10 is the desired radius
+                L[m][0] = 0;
+                L[m][1] = 0;
+                L[m][2] = 0.5;
+                L[m][3] = 0;
+                L[m][4] = 0;
+                L[m][5] = 0;
+            }
+
+            cout << "e.t(): " << e.t() << endl;
+            cout << "Lpseudo: " << L.pseudoInverse() << endl;
+            v = -lambda * L.pseudoInverse() * e;
             cout << "law: " << v.t() << endl;
         }
-
+        
+        //void vpMbtDistanceCircle::buildFrom(p[0], p[2], p[3], RR);
 
         vpDisplay::display ( I );
-        for(i=0;i<5;++i)
-        {
-            P[i].changeFrame(cMo);
-            P[i].project();
-        }
+
         vpMeterPixelConversion::convertPoint(cam, P[0].get_x(), P[0].get_y(), ip1);
 
         for(i=1;i<5;++i)
@@ -256,6 +307,17 @@ int main ( int argc, char ** argv )
             vpMeterPixelConversion::convertPoint(cam, P[i].get_x(), P[i].get_y(), ip2);
             vpDisplay::displayLine(I, ip1, ip2, vpColor::red, 2);
         }
+
+        // //Convert from normalized cordinates to pixel cordinates
+        // vpMeterPixelConversion::convertEllipse(cam, C, test_point, Xa, Ya, Za);
+        // vpDisplay::displayEllipse(I, test_point, Xa, Ya, Za, true, vpColor::green, 1); //then display
+
+        //Display circle
+        //C.display(I, cam, vpColor::red, 1);
+
+        //Display Circle with input as radius in pixel cordinates
+        //vpDisplay::displayCircle(I, ip1, R*1000, vpColor::green, false, 1); //Radius from the 3 blade points.
+        vpDisplay::displayCircle(I, ip1, RR*1000, vpColor::blue, false, 1); //Radius from the known center and one of the blade points (cheating).
 
         vpDisplay::flush ( I );
 
