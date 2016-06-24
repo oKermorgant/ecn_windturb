@@ -56,7 +56,7 @@ int main ( int argc, char ** argv )
     vpIoTools::addNameElement ( "l", useLines );
     vpIoTools::addNameElement ( "dt", useDiffAngles );
     vpIoTools::addNameElement ( "rot", rotating );
-    vpIoTools::addNameElement ( "Rad", useCircleRadius );
+    vpIoTools::addNameElement ( "rad", useCircleRadius );
 
     // init display
     vpImage<unsigned char> I ( 480,640,255 );
@@ -78,12 +78,11 @@ int main ( int argc, char ** argv )
     {
         line[i+1].setWorldCoordinates(0,1,0,0,cos(offset+i*2*M_PI/3), 0, sin(offset+i*2*M_PI/3),0);  // y = 0, x.cos(t) + z.sin(t) = 0
         P[i+2].setWorldCoordinates(-sin(offset+i*2*M_PI/3),0,cos(offset+i*2*M_PI/3));
-        //cout << "P[" <<i+2<< "] = " << P[i+2] << endl; 
     }
 
     // camera pose
     vpHomogeneousMatrix cMod(0,0,4,M_PI/2,0,0);
-    vpHomogeneousMatrix cMo(10,10,50,M_PI/2,0,M_PI/6);
+    vpHomogeneousMatrix cMo(0,10,50,M_PI/2,0,M_PI/6);
     vpImagePoint ip1, ip2, test_point;
     vpColVector v(6);
 
@@ -124,7 +123,7 @@ int main ( int argc, char ** argv )
 
     cout << "m after lines: " << m << endl;
 
-    // diff angles
+    // Diff angles
     vpColVector dt(3), dtd(3), et;
     vpMatrix Ldt;
     unsigned int i2;
@@ -139,6 +138,7 @@ int main ( int argc, char ** argv )
         }
     }
 
+    // If radius is used
     if(useCircleRadius)
     {
         m+=1;
@@ -187,11 +187,12 @@ int main ( int argc, char ** argv )
             vpFeatureBuilder::create(l[i], line[i]);
         }
 
-        // update point
+        // update point P[0]
         P[0].changeFrame(cMo);
         P[0].project();
         vpFeatureBuilder::create(p, P[0]);
 
+        // update remaining points 
         for(i=1;i<5;++i)
         {
             P[i].changeFrame(cMo);
@@ -295,8 +296,6 @@ int main ( int argc, char ** argv )
             v = -lambda * L.pseudoInverse() * e;
             cout << "law: " << v.t() << endl;
         }
-        
-        //void vpMbtDistanceCircle::buildFrom(p[0], p[2], p[3], RR);
 
         vpDisplay::display ( I );
 
@@ -317,7 +316,8 @@ int main ( int argc, char ** argv )
 
         //Display Circle with input as radius in pixel cordinates
         //vpDisplay::displayCircle(I, ip1, R*1000, vpColor::green, false, 1); //Radius from the 3 blade points.
-        vpDisplay::displayCircle(I, ip1, RR*1000, vpColor::blue, false, 1); //Radius from the known center and one of the blade points (cheating).
+        
+        vpDisplay::displayCircle(I, ip1, RR*1000, vpColor::blue, false, 1); //Radius from the known center and one of the blade points.
 
         vpDisplay::flush ( I );
 
