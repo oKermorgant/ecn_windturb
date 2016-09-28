@@ -21,6 +21,8 @@
 #include <visp3/core/vpDisplay.h>
 #include <math.h>
 
+#include<nav_msgs/Odometry.h>
+
 
 using std::string;
 using std::cout;
@@ -29,8 +31,13 @@ using std::endl;
 int main ( int argc, char ** argv )
 {
 
-    // init and read config file
-    vpIoTools::loadConfigFile(ros::package::getPath("windturb") + "/windturb.ini");
+
+
+
+
+
+            // init and read config file
+            vpIoTools::loadConfigFile(ros::package::getPath("windturb") + "/windturb.ini");
     string dataPath;    vpIoTools::readConfigVar ( "dataPath", dataPath );
     dataPath = vpIoTools::path(dataPath);
     string expID; vpIoTools::readConfigVar("expID", expID);
@@ -78,7 +85,7 @@ int main ( int argc, char ** argv )
     {
         line[i+1].setWorldCoordinates(0,1,0,0,cos(offset+i*2*M_PI/3), 0, sin(offset+i*2*M_PI/3),0);  // y = 0, x.cos(t) + z.sin(t) = 0
         P[i+2].setWorldCoordinates(-sin(offset+i*2*M_PI/3),0,cos(offset+i*2*M_PI/3));
-        //cout << "P[" <<i+2<< "] = " << P[i+2] << endl; 
+        //cout << "P[" <<i+2<< "] = " << P[i+2] << endl;
     }
 
     // camera pose
@@ -90,7 +97,7 @@ int main ( int argc, char ** argv )
     // Initializations for the circle display
     double Xa, Ya, Za, slope_1, slope_2, x_c, y_c, R, RR;
 
-    // Init circle 
+    // Init circle
     vpCircle C;
     C.setWorldCoordinates(0,1,0,0,0,0,1);
 
@@ -266,7 +273,7 @@ int main ( int argc, char ** argv )
             if(useCircleRadius)
             {
 
-            //three points are P[2](x1,y1), P[3](x2,y2), P[4](x3,y3)
+                //three points are P[2](x1,y1), P[3](x2,y2), P[4](x3,y3)
                 slope_1 = (P[2].get_y()-P[3].get_y())/(P[2].get_x()-P[3].get_x());
                 slope_2 = (P[4].get_y()-P[3].get_y())/(P[4].get_x()-P[3].get_x());
 
@@ -276,11 +283,11 @@ int main ( int argc, char ** argv )
                 R = sqrt((P[3].get_x()-x_c)*(P[3].get_x()-x_c) + (P[3].get_y()-y_c)*(P[3].get_y()-y_c));
                 RR = sqrt((P[3].get_x()-P[0].get_x())*(P[3].get_x()-P[0].get_x()) + (P[3].get_y()-P[0].get_y())*(P[3].get_y()-P[0].get_y()));
 
-            //Checking
-                cout<<"R from 3 blade points= " << R << endl; // Not a good result, varies if blade rotation is on 
+                //Checking
+                cout<<"R from 3 blade points= " << R << endl; // Not a good result, varies if blade rotation is on
                 cout<<"R from the known center and a blade point (cheating)= " << RR << endl; // Not bad and stable even if blade rotation is on
-            
-            //Error calc and interaction matrix for the Radius 
+
+                //Error calc and interaction matrix for the Radius
                 e[m] = RR*100 - 12; // 10 is the desired radius
                 L[m][0] = 0;
                 L[m][1] = 0;

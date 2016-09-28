@@ -34,5 +34,7 @@ ${VISP_INCLUDE_DIRS}
 
 
 
+
+
 add_executable(windturb src/windturb.cpp include/windturb/okExperiment.h src/okExperiment.cpp)
 target_link_libraries(windturb  ${catkin_LIBRARIES} ${VISP_LIBRARIES} ${OpenCV_LIBS} )

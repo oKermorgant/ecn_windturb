@@ -14,7 +14,7 @@
 
     <!-- launch wind -->
     <node name="wind" pkg="windturb" type="wind">
-        <param name="w" value="0.5"/>
+        <param name="w" value="0."/>
     </node>
 </launch>
 
